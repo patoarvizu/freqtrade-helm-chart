@@ -1,0 +1,9 @@
+config:
+  api_server:
+    enabled: true
+
+backtesting:
+  enabled: false
+
+bot:
+  enabled: true

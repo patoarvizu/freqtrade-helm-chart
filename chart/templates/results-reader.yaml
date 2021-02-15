@@ -1,0 +1,65 @@
+{{- if (and .Values.backtesting.enabled .Values.backtesting.results.reader_enabled) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: results-reader-config
+data:
+  default.conf: |
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location /results {
+            root /usr/share/nginx;
+            autoindex on;
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: results-reader
+spec:
+  selector:
+    matchLabels:
+      app: results-reader
+  template:
+    metadata:
+      labels:
+        app: results-reader
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.19.6
+        volumeMounts:
+        - mountPath: /usr/share/nginx/results
+          name: results
+        - mountPath: /etc/nginx/conf.d
+          name: config
+        ports:
+        - name: http
+          containerPort: 80
+      volumes:
+      - name: results
+        persistentVolumeClaim:
+          claimName: backtesting-results
+      - name: config
+        configMap:
+          name: results-reader-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: results-reader
+  labels:
+    app: results-reader
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: http
+  selector:
+    app: results-reader
+---
+{{- end }}

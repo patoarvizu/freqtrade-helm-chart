@@ -1,0 +1,107 @@
+{{- if .Values.backtesting.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backtesting-{{ now | unixEpoch }}
+spec:
+  template:
+    spec:
+      {{- if .Values.backtesting.download_data }}
+      initContainers:
+      - name: download-data
+        image: freqtradeorg/freqtrade:{{ .Values.image_tag }}
+        command:
+        - freqtrade
+        args:
+        - download-data
+        - --pairs
+{{ .Values.config.exchange.pair_whitelist | toYaml | indent 8 }}
+        - --timerange
+        - {{ .Values.backtesting.timerange }}
+        - --timeframes
+        - {{ .Values.backtesting.timeframes }}
+        - --datadir
+        - /data/{{ .Values.config.exchange.name }}
+        - --config
+        - /freqtrade/config/config.json
+        volumeMounts:
+        - mountPath: /data
+          name: data
+        - mountPath: /freqtrade/config
+          name: config
+      {{- end }}
+      containers:
+      - name: backtesting
+        image: freqtradeorg/freqtrade:{{ .Values.image_tag }}
+        command:
+        - freqtrade
+        args:
+        - backtesting
+        - --config
+        - /freqtrade/config/config.json
+        - --datadir
+        - /data/{{ .Values.config.exchange.name }}
+        - --strategy-list
+        - {{ .Values.backtesting.strategy_list }}
+        {{- if .Values.backtesting.timerange }}
+        - --timerange
+        - {{ .Values.backtesting.timerange }}
+        {{- end }}
+        {{- if .Values.backtesting.fee }}
+        - --fee
+        - {{ .Values.backtesting.fee | quote }}
+        {{- end }}
+        {{- if .Values.backtesting.results.enable_export }}
+        - --export
+        - trades
+        - --export-filename
+        - /results/backtesting-{{ now | unixEpoch }}.json
+        {{- end }}
+        volumeMounts:
+        - mountPath: /data
+          name: data
+        - mountPath: /results
+          name: results
+        - mountPath: /freqtrade/config
+          name: config
+        - mountPath: /freqtrade/user_data/strategies
+          name: strategies
+      restartPolicy: Never
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: backtesting-data
+      - name: results
+        persistentVolumeClaim:
+          claimName: backtesting-results
+      - name: config
+        configMap:
+          name: freqtrade-config
+      - name: strategies
+        configMap:
+          name: freqtrade-strategies
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backtesting-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.backtesting.pvc_size }}
+---
+{{- if .Values.backtesting.results.enable_export }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backtesting-results
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.backtesting.results.pvc_size }}
+{{- end }}
+{{- end }}

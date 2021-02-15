@@ -1,0 +1,59 @@
+{{- if .Values.bot.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freqtrade
+spec:
+  selector:
+    matchLabels:
+      app: freqtrade
+  template:
+    metadata:
+      labels:
+        app: freqtrade
+    spec:
+      containers:
+      - name: freqtrade
+        image: freqtradeorg/freqtrade:{{ .Values.image_tag }}
+        command:
+        - freqtrade
+        args:
+        - trade
+        - --config
+        - /freqtrade/config/config.json
+        - --strategy
+        - {{ .Values.bot.strategy_name }}
+        - --db-url
+        - sqlite:////sqlite/tradesv3.sqlite
+        volumeMounts:
+        - mountPath: /freqtrade/config
+          name: config
+        - mountPath: /freqtrade/user_data/strategies
+          name: strategies
+        - mountPath: /sqlite
+          name: sqlite
+        ports:
+        - name: api
+          containerPort: 8080
+      volumes:
+      - name: config
+        configMap:
+          name: freqtrade-config
+      - name: strategies
+        configMap:
+          name: freqtrade-strategies
+      - name: sqlite
+        persistentVolumeClaim:
+          claimName: freqtrade-sqlite
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: freqtrade-sqlite
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.bot.pvc_size }}
+{{- end }}
