@@ -1,0 +1,12 @@
+backtesting:
+  enabled: true
+  timerange: "20210213-"
+
+bot:
+  enabled: false
+
+ingress:
+  enabled: false
+
+create_config_configmap: false
+create_strategies_configmap: false

@@ -1,0 +1,20 @@
+releases:
+- name: freqtrade
+  namespace: freqtrade
+  chart: ../chart/
+  version: 0.0.0
+  missingFileHandler: Warn
+  values:
+  - values/bot.yaml
+  - secrets/secrets.yaml
+- name: backtesting
+  namespace: freqtrade
+  chart: ../chart/
+  version: 0.0.0
+  values:
+  - values/backtesting.yaml
+
+helmDefaults:
+  args:
+  - --kubeconfig
+  - {{ requiredEnv "HOME" }}/.k3d/k3s-default-config
