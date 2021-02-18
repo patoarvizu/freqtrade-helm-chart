@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: freqtrade
-        image: freqtradeorg/freqtrade:{{ .Values.image_tag }}
+        image: freqtradeorg/freqtrade:{{ .Values.image.tag }}
         command:
         - freqtrade
         args:
