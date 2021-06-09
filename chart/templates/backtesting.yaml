@@ -9,7 +9,7 @@ spec:
       {{- if .Values.backtesting.download_data }}
       initContainers:
       - name: download-data
-        image: freqtradeorg/freqtrade:{{ .Values.image.tag }}
+        image: {{ .Values.image.image }}:{{ .Values.image.tag }}
         command:
         - freqtrade
         args:
@@ -32,7 +32,7 @@ spec:
       {{- end }}
       containers:
       - name: backtesting
-        image: freqtradeorg/freqtrade:{{ .Values.image.tag }}
+        image: {{ .Values.image.image }}:{{ .Values.image.tag }}
         command:
         - freqtrade
         args:
