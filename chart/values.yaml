@@ -72,7 +72,7 @@ config:
     process_throttle_secs: 5
 
 image:
-  image: freqtradeorg/freqtrade
+  base: freqtradeorg/freqtrade
   tag: latest
 
 backtesting:
