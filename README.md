@@ -12,4 +12,4 @@ The [`chart`](./chart) directory contains the Helm 3 chart for deploying a freqt
 
 ## Testing locally
 
-If you don't have a full-fledged Kubernetes environment and want to test things locally and see them in action, follow the instructions under the [`test-local`](./test-local) directory.
+If you don't have a full-fledged Kubernetes environment and want to test things locally and see them in action, follow the instructions under the [`test-local`](./test-local) directory. 
