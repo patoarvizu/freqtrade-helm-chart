@@ -28,4 +28,4 @@ jobs:
       # Runs a single command using the runners shell
       - name: List files
         run: |
-          ls ${{github.workspace}}/chart
+          ls ${{github.workspace}}/chart/strategies
