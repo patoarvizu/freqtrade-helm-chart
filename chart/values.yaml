@@ -1,6 +1,6 @@
 config:
   max_open_trades: -1
-  stake_currency: BTC
+  stake_currency: USDT
   stake_amount: 1
   tradable_balance_ratio: 0.99
   fiat_display_currency: USD
@@ -60,7 +60,7 @@ config:
     token: ''
     chat_id: ''
   api_server:
-    enabled: false
+    enabled: true
     listen_ip_address: 0.0.0.0
     listen_port: 8080
     username: admin
@@ -80,7 +80,7 @@ backtesting:
   download_data: true
   timerange:
   timeframes: 5m
-  strategy_list: SampleStrategy
+  strategy_list: NostalgiaForInfinityNext
   fee:
   pvc_size: 1Gi
   results:
@@ -89,8 +89,8 @@ backtesting:
     pvc_size: 1Gi
 
 bot:
-  enabled: false
-  strategy_name: SampleStrategy
+  enabled: true
+  strategy_name: NostalgiaForInfinityNext
   pvc_size: 1Gi
 
 ingress:
@@ -98,5 +98,6 @@ ingress:
 
 create_config_configmap: true
 create_strategies_configmap: true
+create_freqtrade_configmap: true
 
 strategies: {}

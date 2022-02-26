@@ -20,28 +20,35 @@ spec:
         args:
         - trade
         - --config
-        - /freqtrade/config/config.json
+        - /freqtrade/values/values.json
+        - --config
+        - /freqtrade/configs/binance-usdt-static.json
         - --strategy
         - {{ .Values.bot.strategy_name }}
         - --db-url
         - sqlite:////sqlite/tradesv3.sqlite
         volumeMounts:
-        - mountPath: /freqtrade/config
-          name: config
+        - mountPath: /freqtrade/values
+          name: values
         - mountPath: /freqtrade/user_data/strategies
           name: strategies
+        - mountPath: /freqtrade/configs
+          name: configs
         - mountPath: /sqlite
           name: sqlite
         ports:
         - name: api
           containerPort: 8080
       volumes:
-      - name: config
+      - name: values
         configMap:
-          name: freqtrade-config
+          name: freqtrade-values
       - name: strategies
         configMap:
           name: freqtrade-strategies
+      - name: configs
+        configMap:
+          name: freqtrade-configs
       - name: sqlite
         persistentVolumeClaim:
           claimName: freqtrade-sqlite

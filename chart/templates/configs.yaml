@@ -1,0 +1,8 @@
+{{- if .Values.create_freqtrade_configmap }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freqtrade-configs
+data:
+{{ (.Files.Glob "configs/*.json").AsConfig | indent 2 }}
+{{- end }}
