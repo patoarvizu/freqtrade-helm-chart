@@ -19,7 +19,13 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Copy strategy
+        uses: canastro/copy-file-action@master
+        with:
+          source: "NostalgiaForInfinity/NostalgiaForInfinityNext.py"
+          target: "chart/strategies/NostalgiaForInfinityNext.py"
+
       # Runs a single command using the runners shell
       - name: List files
         run: |
-          ls ${{github.workspace}}
+          ls ${{github.workspace}}/chart
